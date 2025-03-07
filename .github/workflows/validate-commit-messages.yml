@@ -22,7 +22,7 @@ jobs:
             COMMITS=$(git log --format=%H ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }})
           else
             # For push events, get the pushed commits
-            COMMITS=$(git log --format=%H -n 1 HEAD)
+            COMMITS=$(git log --format=%H -n 10 HEAD)
           fi
           
           # Define a pattern that matches any commit message starting with [anything] 
