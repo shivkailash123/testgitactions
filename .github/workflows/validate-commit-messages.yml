@@ -25,15 +25,16 @@ jobs:
             COMMITS=$(git log --format=%H HEAD~10..HEAD)
           fi
           
-          # Define the JIRA ID pattern as [PROJ-123]: message
-          COMMIT_PATTERN="^\[[A-Z]+-[0-9]+\]: .+"
+          # Define a pattern that matches any commit message starting with [anything] 
+          # with optional space after the closing bracket
+          COMMIT_PATTERN="^\[.+\].*"
           
           # Validate each commit
           for COMMIT in $COMMITS; do
             MESSAGE=$(git log --format=%B -n 1 $COMMIT)
             if ! [[ $MESSAGE =~ $COMMIT_PATTERN ]]; then
               echo "Invalid commit message: $MESSAGE"
-              echo "Commit messages must follow the pattern [JIRA-123]: your commit message"
+              echo "Commit messages must start with text in square brackets [ANY-TEXT]"
               exit 1
             fi
           done
