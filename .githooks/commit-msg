@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# JIRA ticket pattern (e.g., ABC-123 or PROJ-456)
+JIRA_PATTERN="([A-Z]{2,}-[0-9]+)"
+
+# Read the commit message
+COMMIT_MSG=$(cat "$1")
+
+# Check if the commit message contains a JIRA ticket
+if ! [[ $COMMIT_MSG =~ $JIRA_PATTERN ]]; then
+    echo "❌ ERROR: Commit message must include a valid JIRA ticket (e.g., ABC-123)."
+    echo "👉 Example: 'PROJ-456: Fix login bug'"
+    exit 1
+fi
+
+echo "✅ JIRA ticket found: ${BASH_REMATCH[0]}"
