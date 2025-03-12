@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Regex for Conventional Commits (e.g., feat:, fix:, chore:)
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat $COMMIT_MSG_FILE)
+PATTERN="^(feat|fix|docs|style|refactor|test|chore|ci|build|revert)(\(.+\))?: .{1,72}$"
+
+# Validate commit message
+if ! [[ "$COMMIT_MSG" =~ $PATTERN ]]; then
+    echo "❌ Invalid commit message: '$COMMIT_MSG'"
+    echo "👉 Use the Conventional Commits format:"
+    echo "   Examples:"
+    echo "     feat: add new feature"
+    echo "     fix: resolve bug"
+    echo "     chore: update dependencies"
+    exit 1
+fi
+
+echo "✅ Commit message is valid."
