@@ -26,14 +26,15 @@ ticket_id=$(grep -oE '^\[.+\].*' "$commit_msg_file" | head -n 1)
 
 if [ -n "$ticket_id" ]; then
     # Fetch the Jira description (you can change the API URL and authentication method)
-    jira_response=$(curl -s -u your_username:your_token \
+    jira_response=$(curl -s -u shiv.tiwari@ibm.com:cQuHFgJjXilPLHOHc75ccuQ4MkHWy7mn57noSL \
                              -X GET \
                              -H "Content-Type: application/json" \
-                             "https://your-jira-instance.atlassian.net/rest/api/2/issue/$ticket_id")
+                             "https://jsw.ibm.com/browse/$ticket_id")
     
     # Extract the description from the response (use jq or a JSON parser)
     description=$(echo "$jira_response" | jq -r '.fields.description')
     
+    echo "checking.... $ticket_id"
     # Check if description is not empty
     if [ -n "$description" ]; then
         # Append the description to the commit message
