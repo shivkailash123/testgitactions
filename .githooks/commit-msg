@@ -1,16 +1,47 @@
+# #!/bin/bash
+
+# # JIRA ticket pattern (e.g., ABC-123 or PROJ-456)
+# JIRA_PATTERN="^\[.+\].*"
+
+# # Read the commit message
+# COMMIT_MSG=$(cat "$1")
+
+# # Check if the commit message contains a JIRA ticket
+# if ! [[ $COMMIT_MSG =~ $JIRA_PATTERN ]]; then
+#     echo "ERROR: Commit message must include a valid JIRA ticket (e.g., [ABC-123]: Testing)."
+#     echo "Example: '[PROJ-456]: Fix login bug'"
+#     exit 1
+# fi
+
+# echo "JIRA ticket found: ${BASH_REMATCH[0]}"
+
+
 #!/bin/bash
 
-# JIRA ticket pattern (e.g., ABC-123 or PROJ-456)
-JIRA_PATTERN="^\[.+\].*"
+# Get the commit message file
+commit_msg_file=$1
 
-# Read the commit message
-COMMIT_MSG=$(cat "$1")
+# Extract the JIRA ticket from the commit message (assuming the ticket ID format is TICKET-ID)
+ticket_id=$(grep -oE '^\[.+\].*' "$commit_msg_file" | head -n 1)
 
-# Check if the commit message contains a JIRA ticket
-if ! [[ $COMMIT_MSG =~ $JIRA_PATTERN ]]; then
-    echo "❌ ERROR: Commit message must include a valid JIRA ticket (e.g., [ABC-123]: Testing)."
-    echo "👉 Example: '[PROJ-456]: Fix login bug'"
-    exit 1
+if [ -n "$ticket_id" ]; then
+    # Fetch the Jira description (you can change the API URL and authentication method)
+    jira_response=$(curl -s -u your_username:your_token \
+                             -X GET \
+                             -H "Content-Type: application/json" \
+                             "https://your-jira-instance.atlassian.net/rest/api/2/issue/$ticket_id")
+    
+    # Extract the description from the response (use jq or a JSON parser)
+    description=$(echo "$jira_response" | jq -r '.fields.description')
+    
+    # Check if description is not empty
+    if [ -n "$description" ]; then
+        # Append the description to the commit message
+        echo -e "\n\nJira Ticket Description:\n$description" >> "$commit_msg_file"
+    else
+        echo "No description found for ticket $ticket_id."
+    fi
+else
+    echo "No Jira ticket found in commit message."
 fi
 
-echo "✅ JIRA ticket found: ${BASH_REMATCH[0]}"
