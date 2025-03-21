@@ -80,7 +80,7 @@ if [ -z "$description" ]; then
     echo "ERROR: No description found for Jira ticket $ticket_id. Commit cancelled."
     exit 1  # Exit with an error code to prevent the commit
 else
-    echo -e "$description" >> "$commit_msg_file"
+    echo  "$description" >> "$commit_msg_file"
     echo "Jira ticket description found. Proceeding with commit."
 fi
 
