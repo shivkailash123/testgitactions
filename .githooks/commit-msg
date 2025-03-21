@@ -19,30 +19,69 @@
 #!/bin/bash
 
 # Get the commit message file
+# commit_msg_file=$1
+
+# # Extract the JIRA ticket from the commit message (assuming the ticket ID format is TICKET-ID)
+# ticket_id=$(grep -oE '^\[.+\].*' "$commit_msg_file" | head -n 1)
+
+# if [ -n "$ticket_id" ]; then
+#     # Fetch the Jira description (you can change the API URL and authentication method)
+#     jira_response=$(curl -s -u shiv.tiwari@ibm.com:token \
+#                              -X GET \
+#                              -H "Content-Type: application/json" \
+#                              "https://jsw.ibm.com/browse/$ticket_id")
+    
+#     # Extract the description from the response (use jq or a JSON parser)
+#     description=$(echo "$jira_response" | jq -r '.fields.description')
+    
+#     echo "checking.... $ticket_id"
+#     # Check if description is not empty
+#     if [ -n "$description" ]; then
+#         # Append the description to the commit message
+#         echo -e "\n\nJira Ticket Description:\n$description" >> "$commit_msg_file"
+#     else
+#         echo "No description found for ticket $ticket_id."
+#     fi
+# else
+#     echo "No Jira ticket found in commit message."
+# fi
+
+
+
+
+#!/bin/bash
+
+# Get the commit message file path
 commit_msg_file=$1
 
-# Extract the JIRA ticket from the commit message (assuming the ticket ID format is TICKET-ID)
-ticket_id=$(grep -oE '^\[.+\].*' "$commit_msg_file" | head -n 1)
-
-if [ -n "$ticket_id" ]; then
-    # Fetch the Jira description (you can change the API URL and authentication method)
-    jira_response=$(curl -s -u shiv.tiwari@ibm.com:cQuHFgJjXilPLHOHc75ccuQ4MkHWy7mn57noSL \
-                             -X GET \
-                             -H "Content-Type: application/json" \
-                             "https://jsw.ibm.com/browse/$ticket_id")
-    
-    # Extract the description from the response (use jq or a JSON parser)
-    description=$(echo "$jira_response" | jq -r '.fields.description')
-    
-    echo "checking.... $ticket_id"
-    # Check if description is not empty
-    if [ -n "$description" ]; then
-        # Append the description to the commit message
-        echo -e "\n\nJira Ticket Description:\n$description" >> "$commit_msg_file"
-    else
-        echo "No description found for ticket $ticket_id."
-    fi
+# Extract the Jira ticket ID from the commit message (e.g., [ZMFMD-1486]: testing...)
+ticket_id=$(grep -oE '\[([A-Z]+-[0-9]+)\]:' "$commit_msg_file" | sed 's/\[\([A-Z]*-[0-9]*\)\]:/\1/')
+echo "testing : $ticket_id"
+# Check if a Jira ticket ID was found
+if [ -z "$ticket_id" ]; then
+    echo "ERROR: No Jira ticket ID found in commit message. Please include a ticket ID in the format [PROJECT-123]."
+    exit 1  # Exit with an error code to prevent the commit
 else
-    echo "No Jira ticket found in commit message."
+    echo "Found Jira ticket: $ticket_id"
 fi
+
+# Fetch the Jira ticket description using the Jira API
+jira_response=$(curl -s -u shiv.tiwari@ibm.com:cQuHFgJjXilPLHOHc75ccuQ4MkHWy7mn57noSL \
+                     -X GET \
+                     -H "Content-Type: application/json" \
+                     "https://jsw.ibm.com/rest/api/2/issue/$ticket_id")
+
+# Check if the response contains a valid description
+description=$(echo "$jira_response" | jq -r '.fields.description')
+
+if [ -z "$description" ]; then
+    echo "ERROR: No description found for Jira ticket $ticket_id. Commit cancelled."
+    exit 1  # Exit with an error code to prevent the commit
+else
+    echo "Jira ticket description found. Proceeding with commit."
+fi
+
+# Optionally, append the description to the commit message (if needed):
+# echo -e "\n\nJira Ticket Description:\n$description" >> "$commit_msg_file"
+
 
