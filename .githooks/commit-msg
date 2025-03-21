@@ -55,7 +55,7 @@
 commit_msg_file=$1
 
 # Extract the Jira ticket ID from the commit message (e.g., [ZMFMD-1486]: testing...)
-ticket_id=$(grep -oE '\[([A-Z]+-[0-9]+)\]:' "$commit_msg_file" | sed 's/\[\([A-Z]*-[0-9]*\)\]:/\1/')
+ticket_id=$(grep -oE '^\[.+\].*' "$commit_msg_file" | head -n 1)
 echo "testing : $ticket_id"
 # Check if a Jira ticket ID was found
 if [ -z "$ticket_id" ]; then
@@ -78,6 +78,7 @@ if [ -z "$description" ]; then
     echo "ERROR: No description found for Jira ticket $ticket_id. Commit cancelled."
     exit 1  # Exit with an error code to prevent the commit
 else
+    echo -e "$description" >> "$commit_msg_file"
     echo "Jira ticket description found. Proceeding with commit."
 fi
 
