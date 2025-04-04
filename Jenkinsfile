@@ -6,16 +6,20 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
+                echo '🔄 Cloning the repository...'
                 git branch: 'main', url: 'https://github.com/shivkailash123/testgitactions'
+    
             }
         }
         stage('Build') {
             steps {
+                echo '⚙️ Starting the build process...'
                 sh 'mvn clean install'  // Change if using Gradle or other build tools
             }
         }
         stage('Test') {
             steps {
+                echo '🧪 Running tests...'
                 sh 'mvn test'
             }
         }
