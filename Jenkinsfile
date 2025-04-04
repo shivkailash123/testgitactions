@@ -6,9 +6,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                script {
-                    println "🌀 Cloning the repository..."
-                }
+                    echo  'Cloning the repository...'
                 git branch: 'main', url: 'https://github.com/shivkailash123/testgitactions'
     
             }
