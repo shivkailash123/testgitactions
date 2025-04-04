@@ -3,6 +3,7 @@ pipeline {
     // triggers {
     //     githubPush()  // Automatically triggers on GitHub push
     // }
+    echo 'chekcing......'
     stages {
         stage('Clone') {
             steps {
