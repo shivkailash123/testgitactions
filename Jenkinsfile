@@ -1,23 +1,27 @@
 pipeline {
     agent any
-    // triggers {
-    //     githubPush()  // Automatically triggers on GitHub push
-    // }
-    echo 'chekcing......'
+
     stages {
-        stage('Clone') {
+        stage('Initial Check') {
             steps {
-                    echo  'Cloning the repository...'
-                git branch: 'main', url: 'https://github.com/shivkailash123/testgitactions'
-    
+                echo 'Checking......'
             }
         }
+
+        stage('Clone') {
+            steps {
+                echo 'Cloning the repository...'
+                git branch: 'main', url: 'https://github.com/shivkailash123/testgitactions'
+            }
+        }
+
         stage('Build') {
             steps {
                 echo '⚙️ Starting the build process...'
-                // sh 'mvn clean install'  // Change if using Gradle or other build tools
+                // sh 'mvn clean install'  // Uncomment if using Maven
             }
         }
+
         stage('Display Files') {
             steps {
                 script {
@@ -26,7 +30,7 @@ pipeline {
                 }
             }
         }
-    }
+
         stage('Test') {
             steps {
                 echo '🧪 Running tests...'
@@ -34,5 +38,10 @@ pipeline {
             }
         }
     }
-    echo 'last testing......'
+
+    post {
+        always {
+            echo 'Last testing......'
+        }
+    }
 }
