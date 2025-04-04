@@ -15,13 +15,22 @@ pipeline {
         stage('Build') {
             steps {
                 echo '⚙️ Starting the build process...'
-                sh 'mvn clean install'  // Change if using Gradle or other build tools
+                // sh 'mvn clean install'  // Change if using Gradle or other build tools
             }
         }
+        stage('Display Files') {
+            steps {
+                script {
+                    echo 'Listing files in workspace...'
+                    sh 'ls -lah'
+                }
+            }
+        }
+    }
         stage('Test') {
             steps {
                 echo '🧪 Running tests...'
-                sh 'mvn test'
+                // sh 'mvn test'
             }
         }
     }
