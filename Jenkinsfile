@@ -1,8 +1,8 @@
 pipeline {
     agent any
-    triggers {
-        githubPush()  // Automatically triggers on GitHub push
-    }
+    // triggers {
+    //     githubPush()  // Automatically triggers on GitHub push
+    // }
     stages {
         stage('Clone') {
             steps {
