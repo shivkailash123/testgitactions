@@ -2,46 +2,42 @@ pipeline {
     agent any
 
     stages {
-        stage('Initial Check') {
+        stage('Checkout') {
             steps {
-                echo 'Checking......'
-            }
-        }
-
-        stage('Clone') {
-            steps {
-                echo 'Cloning the repository...'
-                git branch: 'main', url: 'https://github.com/shivkailash123/testgitactions'
+                echo "Branch: ${env.BRANCH_NAME}"
+                checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                echo '⚙️ Starting the build process...'
-                // sh 'mvn clean install'  // Uncomment if using Maven
-            }
-        }
-
-        stage('Display Files') {
-            steps {
-                script {
-                    echo 'Listing files in workspace...'
-                    sh 'ls -lah'
-                }
+                echo "Building the application..."
+                // Example build command:
+                sh 'echo Simulating build...'
             }
         }
 
         stage('Test') {
             steps {
-                echo '🧪 Running tests...'
-                // sh 'mvn test'
+                echo "Running tests..."
+                // Example test command:
+                sh 'echo Simulating tests...'
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo "Deploying to production (main branch only)..."
             }
         }
     }
 
     post {
         always {
-            echo 'Last testing......'
+            echo "Pipeline finished for branch: ${env.BRANCH_NAME}"
         }
     }
 }
